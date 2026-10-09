@@ -192,10 +192,17 @@ export default function Home() {
             </div>
             <div className="results-heading">
               <h2>
-                {selectedRoute ? `${selectedRoute.name} points` : "All points"}
+                {selectedRoute ? `${selectedRoute.name} stops` : "All points"}
               </h2>
               <span>
-                {results.length} {results.length === 1 ? "point" : "points"}
+                {results.length}{" "}
+                {selectedRoute
+                  ? results.length === 1
+                    ? "stop"
+                    : "stops"
+                  : results.length === 1
+                    ? "point"
+                    : "points"}
               </span>
             </div>
             <div
@@ -203,7 +210,7 @@ export default function Home() {
               ref={listRef}
               aria-label={
                 selectedRoute
-                  ? `${selectedRoute.name} points in exported order`
+                  ? `${selectedRoute.name} stops in exported order`
                   : "All points"
               }
             >

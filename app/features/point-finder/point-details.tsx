@@ -32,10 +32,7 @@ export default function PointDetails({
       </button>
       <div className="details-heading">
         <div>
-          <span className="eyebrow">
-            {reviewed ? "SOURCE LABEL" : "SELECTED POINT"}
-            {point.code ? ` · ${point.code}` : ""}
-          </span>
+          {point.code ? <span className="eyebrow">{point.code}</span> : null}
           <h2>{point.name}</h2>
         </div>
         <button
@@ -83,9 +80,7 @@ export default function PointDetails({
       </dl>
       {point.description && (
         <div className="source-note">
-          <strong>
-            {reviewed ? "Source description · unverified" : "Description"}
-          </strong>
+          <strong>{reviewed ? "Source description" : "Description"}</strong>
           <p>{point.description}</p>
         </div>
       )}
