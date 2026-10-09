@@ -2,34 +2,14 @@ import type { LocationData } from "./model";
 
 // Entirely invented names, codes and approximate demo coordinates. Do not replace with operational data.
 export const demoData: LocationData = {
-  catchments: [
-    { id: "c-medway", name: "Medway" },
-    { id: "c-eden", name: "Eden Vale" },
-  ],
-  jobs: [
-    {
-      id: "j-medway-routine",
-      catchmentId: "c-medway",
-      name: "Routine survey",
-      code: "MW-RS",
-    },
-    {
-      id: "j-medway-followup",
-      catchmentId: "c-medway",
-      name: "Follow-up survey",
-      code: "MW-FU",
-    },
-    {
-      id: "j-eden-routine",
-      catchmentId: "c-eden",
-      name: "Routine survey",
-      code: "EV-RS",
-    },
+  projects: [
+    { id: "p-medway", name: "Medway" },
+    { id: "p-eden", name: "Eden Vale" },
   ],
   routes: [
     {
       id: "r-medway-a",
-      jobId: "j-medway-routine",
+      projectId: "p-medway",
       name: "Medway A",
       code: "MW-A",
       pointIds: [
@@ -45,42 +25,48 @@ export const demoData: LocationData = {
     },
     {
       id: "r-medway-b",
-      jobId: "j-medway-routine",
+      projectId: "p-medway",
       name: "Medway B",
       code: "MW-B",
       pointIds: ["p-04", "p-05", "p-06"],
     },
     {
       id: "r-medway-c",
-      jobId: "j-medway-followup",
+      projectId: "p-medway",
       name: "Medway C",
       code: "MW-C",
       pointIds: ["p-02", "p-07", "p-08"],
     },
     {
       id: "r-eden-a",
-      jobId: "j-eden-routine",
+      projectId: "p-eden",
       name: "Eden Vale A",
       code: "EV-A",
       pointIds: ["p-09", "p-10", "p-11"],
     },
   ],
   sites: [
-    { id: "s-marsh", name: "Willow Marsh", code: "WM" },
-    { id: "s-bridge", name: "South Bridge", code: "SB" },
-    { id: "s-meadow", name: "Long Meadow", code: "LM" },
-    { id: "s-grove", name: "Alder Grove", code: "AG" },
-    { id: "s-mill", name: "Old Mill Green", code: "OMG" },
-    { id: "s-vale", name: "Vale Field", code: "VF" },
-    { id: "s-copper", name: "Copper Field", code: "CF" },
-    { id: "s-birch", name: "Birch Lane", code: "BL" },
-    { id: "s-orchard", name: "Orchard Rise", code: "OR" },
-    { id: "s-bank", name: "West Bank", code: "WB" },
-    { id: "s-hill", name: "Hill View", code: "HV" },
+    { id: "s-marsh", projectId: "p-medway", name: "Willow Marsh", code: "WM" },
+    { id: "s-bridge", projectId: "p-medway", name: "South Bridge", code: "SB" },
+    { id: "s-meadow", projectId: "p-medway", name: "Long Meadow", code: "LM" },
+    { id: "s-grove", projectId: "p-medway", name: "Alder Grove", code: "AG" },
+    { id: "s-mill", projectId: "p-eden", name: "Old Mill Green", code: "OMG" },
+    { id: "s-vale", projectId: "p-eden", name: "Vale Field", code: "VF" },
+    { id: "s-copper", projectId: "p-medway", name: "Copper Field", code: "CF" },
+    { id: "s-birch", projectId: "p-medway", name: "Birch Lane", code: "BL" },
+    {
+      id: "s-orchard",
+      projectId: "p-medway",
+      name: "Orchard Rise",
+      code: "OR",
+    },
+    { id: "s-bank", projectId: "p-medway", name: "West Bank", code: "WB" },
+    { id: "s-hill", projectId: "p-medway", name: "Hill View", code: "HV" },
   ],
   points: [
     {
       id: "p-01",
+      projectId: "p-medway",
       siteId: "s-marsh",
       name: "North edge",
       code: "DEM-001",
@@ -89,6 +75,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-02",
+      projectId: "p-medway",
       siteId: "s-marsh",
       name: "South edge",
       code: "DEM-002",
@@ -97,6 +84,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-03",
+      projectId: "p-medway",
       siteId: "s-bridge",
       name: "Bridge approach",
       code: "DEM-003",
@@ -105,6 +93,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-04",
+      projectId: "p-medway",
       siteId: "s-meadow",
       name: "West meadow",
       code: "DEM-004",
@@ -113,6 +102,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-05",
+      projectId: "p-medway",
       siteId: "s-meadow",
       name: "East meadow",
       code: "DEM-005",
@@ -121,6 +111,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-06",
+      projectId: "p-medway",
       siteId: "s-grove",
       name: "Grove path",
       code: "DEM-006",
@@ -129,6 +120,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-07",
+      projectId: "p-medway",
       siteId: "s-bridge",
       name: "Lower crossing",
       code: "DEM-007",
@@ -137,6 +129,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-08",
+      projectId: "p-medway",
       siteId: "s-grove",
       name: "East clearing",
       code: "DEM-008",
@@ -145,6 +138,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-09",
+      projectId: "p-eden",
       siteId: "s-mill",
       name: "Mill north",
       code: "DEM-009",
@@ -153,6 +147,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-10",
+      projectId: "p-eden",
       siteId: "s-mill",
       name: "Mill south",
       code: "DEM-010",
@@ -161,6 +156,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-11",
+      projectId: "p-eden",
       siteId: "s-vale",
       name: "Field edge",
       code: "DEM-011",
@@ -169,6 +165,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-12",
+      projectId: "p-medway",
       siteId: "s-copper",
       name: "Northern track",
       code: "DEM-012",
@@ -177,6 +174,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-13",
+      projectId: "p-medway",
       siteId: "s-birch",
       name: "Lane corner",
       code: "DEM-013",
@@ -185,6 +183,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-14",
+      projectId: "p-medway",
       siteId: "s-orchard",
       name: "Orchard edge",
       code: "DEM-014",
@@ -193,6 +192,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-15",
+      projectId: "p-medway",
       siteId: "s-bank",
       name: "Eastern path",
       code: "DEM-015",
@@ -201,6 +201,7 @@ export const demoData: LocationData = {
     },
     {
       id: "p-16",
+      projectId: "p-medway",
       siteId: "s-hill",
       name: "Upper clearing",
       code: "DEM-016",

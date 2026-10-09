@@ -31,7 +31,7 @@ describe("synthetic location data", () => {
 });
 
 describe("point search", () => {
-  it("finds points through catchment and route names, ignoring case", () => {
+  it("finds points through project and route names, ignoring case", () => {
     expect(searchPoints(records, "mEdWaY")).toHaveLength(13);
     expect(
       searchPoints(records, "MEDWAY A").map(({ point }) => point.code),
@@ -63,8 +63,8 @@ describe("point search", () => {
 
   it("resolves the shared site and multiple route memberships", () => {
     const record = records.find(({ point }) => point.id === "p-02");
-    expect(record?.site.name).toBe("Willow Marsh");
-    expect(record?.routes.map(({ route }) => route.name)).toEqual([
+    expect(record?.site?.name).toBe("Willow Marsh");
+    expect(record?.routes.map((route) => route.name)).toEqual([
       "Medway A",
       "Medway C",
     ]);

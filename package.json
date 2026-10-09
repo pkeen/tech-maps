@@ -3,12 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "react-router dev",
-    "build": "react-router build",
+    "dev": "react-router dev --host 127.0.0.1",
+    "build": "react-router build && node scripts/check-public-build.mjs",
     "typecheck": "react-router typegen && tsc --noEmit",
     "test": "vitest run --config vitest.config.ts",
-    "format": "prettier --write app tests package.json tsconfig.json vite.config.ts vitest.config.ts react-router.config.ts wrangler.jsonc README.md docs/sprint-01-test-record.md",
-    "format:check": "prettier --check app tests package.json tsconfig.json vite.config.ts vitest.config.ts react-router.config.ts wrangler.jsonc README.md docs/sprint-01-test-record.md",
+    "format": "prettier --write app tests package.json tsconfig.json vite.config.ts vitest.config.ts react-router.config.ts wrangler.jsonc README.md docs/sprint-01-test-record.md docs/sprint-02-test-record.md public/manifest.webmanifest scripts/*.mjs",
+    "format:check": "prettier --check app tests package.json tsconfig.json vite.config.ts vitest.config.ts react-router.config.ts wrangler.jsonc README.md docs/sprint-01-test-record.md docs/sprint-02-test-record.md public/manifest.webmanifest scripts/*.mjs",
     "deploy": "pnpm build && wrangler deploy"
   },
   "dependencies": {
