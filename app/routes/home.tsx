@@ -1,16 +1,13 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { MetaFunction } from "react-router";
 import { demoData } from "../domains/locations/demo-data";
+import { medwayData } from "../domains/locations/medway-data";
 import type { LocationData } from "../domains/locations/model";
 import {
   buildPointRecords,
   recordsForRoute,
-  routeSegments,
   searchPoints,
-  segmentDirectionsUrl,
-  directionsUrl,
 } from "../domains/locations/queries";
-import { parseReviewedImport } from "../domains/locations/review-data";
 import PointDetails from "../features/point-finder/point-details";
 
 const MapPanel = lazy(() => import("../features/map/map-panel"));
@@ -35,7 +32,6 @@ function restoredRouteId(data: LocationData): string {
 export default function Home() {
   const [data, setData] = useState<LocationData | null>(null);
   const [dataMode, setDataMode] = useState<"reviewed" | "demo" | null>(null);
-  const [dataError, setDataError] = useState("");
   const [query, setQuery] = useState("");
   const [routeId, setRouteId] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -53,40 +49,11 @@ export default function Home() {
   useEffect(() => {
     setMapReady(true); // Leaflet is loaded only after the browser starts.
     setTouchScrolling(window.matchMedia("(pointer: coarse)").matches);
-    let cancelled = false;
-    const local =
-      import.meta.env.DEV &&
-      ["localhost", "127.0.0.1"].includes(window.location.hostname);
-    if (!local) {
-      setData(demoData);
-      setDataMode("demo");
-      setRouteId(restoredRouteId(demoData));
-      return;
-    }
-    fetch("/raw/medway-import.review.json", { cache: "no-store" })
-      .then((response) => {
-        if (!response.ok)
-          throw new Error("Local reviewed data file could not be loaded");
-        return response.json() as Promise<unknown>;
-      })
-      .then((input) => {
-        const reviewed = parseReviewedImport(input);
-        if (cancelled) return;
-        setData(reviewed);
-        setDataMode("reviewed");
-        setRouteId(restoredRouteId(reviewed));
-      })
-      .catch((error: unknown) => {
-        if (!cancelled)
-          setDataError(
-            error instanceof Error
-              ? error.message
-              : "Local reviewed data could not be loaded",
-          );
-      });
-    return () => {
-      cancelled = true;
-    };
+    const reviewed = medwayData;
+    const initial = reviewed ?? demoData;
+    setData(initial);
+    setDataMode(reviewed ? "reviewed" : "demo");
+    setRouteId(restoredRouteId(initial));
   }, []);
 
   const records = useMemo(() => (data ? buildPointRecords(data) : []), [data]);
@@ -104,7 +71,6 @@ export default function Home() {
   const orderById = new Map(
     selectedRoute?.pointIds.map((id, index) => [id, index + 1]) ?? [],
   );
-  const segments = selectedRoute ? routeSegments(orderedRouteRecords) : [];
 
   useEffect(() => {
     if (selectedId && window.innerWidth <= 800)
@@ -167,20 +133,8 @@ export default function Home() {
           </span>
           <span>Tech Maps</span>
         </div>
-        <span className="demo-badge">
-          {dataMode === "reviewed" ? "LOCAL REVIEW" : "DEMO DATA"}
-        </span>
       </header>
-      {dataError ? (
-        <section className="load-error" role="alert">
-          <h1>Local data unavailable</h1>
-          <p>{dataError}</p>
-          <p>
-            Check the ignored review JSON, then reload this local page. No demo
-            points have been substituted.
-          </p>
-        </section>
-      ) : !data ? (
+      {!data ? (
         <p className="loading-state" role="status">
           Loading routes…
         </p>
@@ -214,12 +168,6 @@ export default function Home() {
                   </option>
                 ))}
               </select>
-              {dataMode === "reviewed" && (
-                <p className="provisional-note">
-                  Exported order is provisional until the route owner confirms
-                  it.
-                </p>
-              )}
             </div>
             <div className="search-wrap">
               <label htmlFor="point-search">Search points</label>
@@ -359,44 +307,6 @@ export default function Home() {
                   : "Demo locations only"}
               </span>
             </div>
-            {dataMode === "reviewed" && selectedRoute && (
-              <section
-                className="route-tests"
-                aria-label="Google Maps multi-stop test"
-              >
-                <span className="eyebrow">DEVICE TEST · EXPERIMENTAL</span>
-                <h2>Test Google Maps segments</h2>
-                <p>
-                  These links split the provisional route into groups of at most
-                  four stops. Confirm every stop and its order in Maps. The
-                  point list and each point’s Google Maps action remain the
-                  fallback.
-                </p>
-                <div className="segment-links">
-                  {segments.map((segment, index) => {
-                    const first = index * 4 + 1;
-                    const last = first + segment.length - 1;
-                    const url =
-                      segment.length === 1
-                        ? directionsUrl(segment[0].point)
-                        : segmentDirectionsUrl(
-                            segment.map(({ point }) => point),
-                          );
-                    return (
-                      <a
-                        key={first}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Test stops {first}–{last} of{" "}
-                        {orderedRouteRecords.length} ↗
-                      </a>
-                    );
-                  })}
-                </div>
-              </section>
-            )}
           </div>
         </div>
       )}

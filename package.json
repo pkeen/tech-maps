@@ -9,7 +9,8 @@
     "test": "vitest run --config vitest.config.ts",
     "format": "prettier --write app tests package.json tsconfig.json vite.config.ts vitest.config.ts react-router.config.ts wrangler.jsonc README.md docs/sprint-01-test-record.md docs/sprint-02-test-record.md public/manifest.webmanifest scripts/*.mjs",
     "format:check": "prettier --check app tests package.json tsconfig.json vite.config.ts vitest.config.ts react-router.config.ts wrangler.jsonc README.md docs/sprint-01-test-record.md docs/sprint-02-test-record.md public/manifest.webmanifest scripts/*.mjs",
-    "deploy": "pnpm build && wrangler deploy"
+    "deploy": "pnpm build && wrangler deploy",
+    "deploy:real-data": "ALLOW_REAL_DATA=1 react-router build && wrangler deploy"
   },
   "dependencies": {
     "@react-router/node": "^7.9.0",

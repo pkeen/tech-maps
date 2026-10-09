@@ -62,16 +62,6 @@ a {
   font-weight: 400;
   line-height: 1;
 }
-.demo-badge {
-  border: 1px solid #d0e7d8;
-  background: #edfaf0;
-  color: #397e58;
-  border-radius: 100px;
-  padding: 7px 11px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.13em;
-}
 .workspace {
   display: grid;
   grid-template-columns: minmax(310px, 390px) minmax(0, 1fr);
@@ -128,14 +118,10 @@ a {
   color: #173f3e;
   font-weight: 700;
 }
-.provisional-note,
 .global-order-note {
   color: #6a7468;
   font-size: 11px;
   line-height: 1.45;
-}
-.provisional-note {
-  margin: 9px 0 0;
 }
 .global-order-note {
   padding: 0 30px 15px;
@@ -299,9 +285,6 @@ a {
 .details-wrap {
   order: 4;
   scroll-margin-top: 12px;
-}
-.route-tests {
-  order: 5;
 }
 .map-header {
   display: flex;
@@ -538,46 +521,6 @@ a {
 .secondary-button:hover {
   background: #edf7ee;
 }
-.route-tests {
-  margin-top: 18px;
-  padding: 19px 22px;
-  border: 1px solid #d9e6dc;
-  border-radius: 12px;
-  background: #fff;
-}
-.route-tests h2 {
-  margin: 5px 0 8px;
-  font:
-    800 18px Manrope,
-    Arial,
-    sans-serif;
-}
-.route-tests p {
-  margin: 0 0 12px;
-  color: #657d70;
-  font-size: 12px;
-  line-height: 1.5;
-}
-.segment-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.segment-links a {
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid #bad3c5;
-  border-radius: 8px;
-  padding: 0 12px;
-  color: #176a57;
-  font-size: 12px;
-  font-weight: 800;
-  text-decoration: none;
-}
-.segment-links a:hover {
-  background: #edf7ee;
-}
 .leaflet-container {
   font-family: "DM Sans", Arial, sans-serif;
 }
@@ -654,10 +597,6 @@ a:focus-visible {
 @media (max-width: 420px) {
   .brand {
     font-size: 18px;
-  }
-  .demo-badge {
-    font-size: 8px;
-    padding: 6px 7px;
   }
   .map-frame {
     height: 360px;

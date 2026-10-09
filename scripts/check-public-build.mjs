@@ -4,6 +4,13 @@ import { join } from "node:path";
 const output = "build/client";
 const reviewFile = "raw/medway-import.review.json";
 
+if (process.env.ALLOW_REAL_DATA === "1") {
+  console.log(
+    "Public build check: skipped — ALLOW_REAL_DATA=1 (real Medway data intentionally included).",
+  );
+  process.exit(0);
+}
+
 async function filesIn(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const nested = await Promise.all(
