@@ -3,12 +3,12 @@ import { join } from "node:path";
 
 const output = "build/client";
 const reviewFile = "raw/medway-import.review.json";
+const publicMedway = process.env.VITE_PUBLIC_MEDWAY_DATA === "true";
 
-if (process.env.ALLOW_REAL_DATA === "1") {
-  console.log(
-    "Public build check: skipped — ALLOW_REAL_DATA=1 (real Medway data intentionally included).",
+if (publicMedway && process.env.ALLOW_REAL_DATA !== "1") {
+  throw new Error(
+    "Public Medway inclusion requires the explicit ALLOW_REAL_DATA=1 deployment gate",
   );
-  process.exit(0);
 }
 
 async function filesIn(directory) {
@@ -32,8 +32,38 @@ try {
   review = JSON.parse(await readFile(reviewFile, "utf8"));
 } catch (error) {
   if (error?.code !== "ENOENT") throw error;
+  if (publicMedway)
+    throw new Error("Public Medway build requires the private review file");
   console.log(
     "Public build check: private review file absent; file names checked.",
+  );
+  process.exit(0);
+}
+
+const assets = await Promise.all(
+  files.map(async (path) => [path, (await readFile(path)).toString("utf8")]),
+);
+const allText = assets.map(([, text]) => text).join("\n");
+
+if (publicMedway) {
+  for (const point of review.points) {
+    const lat = String(point.latitude);
+    const lon = String(point.longitude);
+    const coordinateVariants = (value) =>
+      value.startsWith("0.") ? [value, value.slice(1)] : [value];
+    if (
+      !coordinateVariants(lat).some((variant) => allText.includes(variant)) ||
+      !coordinateVariants(lon).some((variant) => allText.includes(variant)) ||
+      !allText.includes(point.label)
+    ) {
+      throw new Error("Public build is missing a reviewed Medway point");
+    }
+    if (point.description && !allText.includes(point.description)) {
+      throw new Error("Public build is missing a reviewed Medway description");
+    }
+  }
+  console.log(
+    `Public build check: all ${review.points.length} reviewed locations and ${review.points.filter((point) => point.description).length} descriptions are included.`,
   );
   process.exit(0);
 }
@@ -46,9 +76,7 @@ const markers = review.points
   ])
   .filter((value) => value && value.length >= 6);
 
-for (const path of files) {
-  const body = await readFile(path);
-  const text = body.toString("utf8");
+for (const [path, text] of assets) {
   if (markers.some((marker) => text.includes(marker))) {
     throw new Error(
       `Private Medway content found in public build asset: ${path}`,

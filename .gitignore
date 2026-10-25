@@ -8,3 +8,6 @@ coverage/
 
 # Real location exports and review artifacts
 raw/
+
+# Generated only by the explicit public Medway build command
+app/domains/locations/medway-data.generated.ts

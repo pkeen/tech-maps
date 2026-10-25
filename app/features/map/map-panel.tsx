@@ -15,7 +15,6 @@ type Props = {
   selectedId: string | null;
   location: { latitude: number; longitude: number } | null;
   onSelect: (id: string) => void;
-  touchScrolling: boolean;
 };
 
 const tileUrl =
@@ -56,7 +55,6 @@ export default function MapPanel({
   selectedId,
   location,
   onSelect,
-  touchScrolling,
 }: Props) {
   return (
     <MapContainer
@@ -66,7 +64,7 @@ export default function MapPanel({
       zoomControl={true}
       scrollWheelZoom={true}
       touchZoom={true}
-      dragging={!touchScrolling}
+      dragging={true}
     >
       <TileLayer url={tileUrl} attribution={tileAttribution} maxZoom={19} />
       <MapView records={records} selectedId={selectedId} />

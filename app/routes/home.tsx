@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { MetaFunction } from "react-router";
 import { demoData } from "../domains/locations/demo-data";
-import { medwayData } from "../domains/locations/medway-data";
+import { loadMedwayData } from "../domains/locations/medway-data";
 import type { LocationData } from "../domains/locations/model";
 import {
   buildPointRecords,
@@ -31,7 +31,10 @@ function restoredRouteId(data: LocationData): string {
 
 export default function Home() {
   const [data, setData] = useState<LocationData | null>(null);
-  const [dataMode, setDataMode] = useState<"reviewed" | "demo" | null>(null);
+  const [dataMode, setDataMode] = useState<
+    "reviewed" | "public" | "demo" | null
+  >(null);
+  const [dataError, setDataError] = useState("");
   const [query, setQuery] = useState("");
   const [routeId, setRouteId] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -42,18 +45,33 @@ export default function Home() {
   const [locationMessage, setLocationMessage] = useState("");
   const [locating, setLocating] = useState(false);
   const [mapReady, setMapReady] = useState(false);
-  const [touchScrolling, setTouchScrolling] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMapReady(true); // Leaflet is loaded only after the browser starts.
-    setTouchScrolling(window.matchMedia("(pointer: coarse)").matches);
-    const reviewed = medwayData;
-    const initial = reviewed ?? demoData;
-    setData(initial);
-    setDataMode(reviewed ? "reviewed" : "demo");
-    setRouteId(restoredRouteId(initial));
+    let cancelled = false;
+    loadMedwayData()
+      .then((reviewed) => {
+        if (cancelled) return;
+        const initial = reviewed ?? demoData;
+        setData(initial);
+        setDataMode(
+          reviewed ? (import.meta.env.DEV ? "reviewed" : "public") : "demo",
+        );
+        setRouteId(restoredRouteId(initial));
+      })
+      .catch((error: unknown) => {
+        if (!cancelled)
+          setDataError(
+            error instanceof Error
+              ? error.message
+              : "Local reviewed data could not be loaded",
+          );
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const records = useMemo(() => (data ? buildPointRecords(data) : []), [data]);
@@ -134,7 +152,13 @@ export default function Home() {
           <span>Tech Maps</span>
         </div>
       </header>
-      {!data ? (
+      {dataError ? (
+        <section className="load-error" role="alert">
+          <h1>Local data unavailable</h1>
+          <p>{dataError}</p>
+          <p>Check the ignored review JSON, then reload this local page.</p>
+        </section>
+      ) : !data ? (
         <p className="loading-state" role="status">
           Loading routes…
         </p>
@@ -144,12 +168,12 @@ export default function Home() {
             <div className="finder-intro">
               <span className="eyebrow">FIELD POINT FINDER</span>
               <h1>
-                {dataMode === "reviewed"
+                {dataMode !== "demo"
                   ? "Medway routes"
                   : "Find your next point."}
               </h1>
               <p>
-                {dataMode === "reviewed"
+                {dataMode !== "demo"
                   ? "Choose a route, then open a point in exported order."
                   : "Search a route, site, point name or code."}
               </p>
@@ -182,7 +206,7 @@ export default function Home() {
                     setSelectedId(null);
                   }}
                   placeholder={
-                    dataMode === "reviewed"
+                    dataMode !== "demo"
                       ? "Search a source label"
                       : "Try a point or site"
                   }
@@ -247,7 +271,7 @@ export default function Home() {
                 })
               )}
             </div>
-            {dataMode === "reviewed" && !selectedRoute && (
+            {dataMode !== "demo" && !selectedRoute && (
               <p className="global-order-note">
                 All points follow source file order. Choose a route for its
                 exported folder order.
@@ -295,7 +319,6 @@ export default function Home() {
                     selectedId={selectedId}
                     location={location}
                     onSelect={setSelectedId}
-                    touchScrolling={touchScrolling}
                   />
                 </Suspense>
               ) : (
@@ -303,15 +326,13 @@ export default function Home() {
               )}
             </div>
             <div className="map-footer">
-              <span>
-                {touchScrolling
-                  ? "Pinch to zoom; scroll the page with one finger."
-                  : "Select a marker or point from the list."}
-              </span>
+              <span>Drag to pan; pinch or scroll to zoom.</span>
               <span>
                 {dataMode === "reviewed"
                   ? "Local review data"
-                  : "Demo locations only"}
+                  : dataMode === "public"
+                    ? "Medway locations"
+                    : "Demo locations only"}
               </span>
             </div>
           </div>
